@@ -1,0 +1,29 @@
+{
+  "name": "tunetogether",
+  "version": "1.0.0",
+  "description": "Listen Together, Anywhere - A real-time music streaming and party mode web application",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8080",
+    "serve": "npx http-server -p 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ogarsh/TuneTogether.git"
+  },
+  "keywords": [
+    "music",
+    "streaming",
+    "party-mode",
+    "real-time",
+    "spotify",
+    "firebase",
+    "web-app"
+  ],
+  "author": "ogarsh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ogarsh/TuneTogether/issues"
+  },
+  "homepage": "https://ogarsh.tech/TuneTogether/"
+}

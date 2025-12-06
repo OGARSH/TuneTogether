@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Guide - TuneTogether</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #ffffff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(20, 25, 55, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #00f0ff, #ff00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        
+        h2 {
+            color: #00f0ff;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            color: #00ff88;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: #a0a0c0;
+        }
+        
+        .step {
+            background: rgba(30, 36, 71, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00f0ff;
+        }
+        
+        code {
+            background: #0a0e27;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+        }
+        
+        pre {
+            background: #0a0e27;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #00f0ff, #ff00ff);
+            color: #0a0e27;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 10px 10px 10px 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .button:hover {
+            transform: scale(1.05);
+        }
+        
+        .warning {
+            background: rgba(255, 165, 0, 0.1);
+            border-left: 4px solid #ffa500;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .success {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        ul {
+            margin-left: 30px;
+            color: #a0a0c0;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        a {
+            color: #00f0ff;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 TuneTogether Setup Guide</h1>
+        <p>Follow these steps to configure and deploy your TuneTogether application.</p>
+        
+        <div class="success">
+            ✅ <strong>Quick Start:</strong> The app works out of the box with demo tracks! Configure APIs for full functionality.
+        </div>
+        
+        <h2>📋 What You'll Need</h2>
+        <ul>
+            <li>GitHub account (free)</li>
+            <li>Spotify Developer account (free) - for music search</li>
+            <li>Firebase account (free) - for party mode</li>
+            <li>Text editor (VS Code, Sublime Text, etc.)</li>
+        </ul>
+        
+        <h2>⚙️ Configuration Steps</h2>
+        
+        <div class="step">
+            <h3>Step 1: Spotify API Setup</h3>
+            <p>Spotify provides free API access for music search and playback previews.</p>
+            <ol>
+                <li>Go to <a href="https://developer.spotify.com/dashboard" target="_blank">Spotify Developer Dashboard</a></li>
+                <li>Log in or create an account</li>
+                <li>Click <strong>"Create App"</strong></li>
+                <li>Fill in:
+                    <ul>
+                        <li>App Name: <code>TuneTogether</code></li>
+                        <li>App Description: <code>Music streaming with party mode</code></li>
+                        <li>Redirect URI: <code>http://localhost:8080</code></li>
+                    </ul>
+                </li>
+                <li>Agree to terms and click <strong>"Create"</strong></li>
+                <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong></li>
+                <li>Open <code>config.js</code> and paste them in the appropriate fields</li>
+            </ol>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Firebase Setup (For Party Mode)</h3>
+            <p>Firebase provides real-time database for synchronizing party rooms.</p>
+            <ol>
+                <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                <li>Click <strong>"Add Project"</strong></li>
+                <li>Name it <code>TuneTogether</code> and follow the wizard</li>
+                <li>In your project dashboard, click the <strong>Web icon (&lt;/&gt;)</strong></li>
+                <li>Register your app with nickname <code>TuneTogether</code></li>
+                <li>Copy the Firebase configuration object</li>
+                <li>Paste it into <code>config.js</code> in the <code>FIREBASE_CONFIG</code> section</li>
+                <li>Go to <strong>Build → Realtime Database</strong></li>
+                <li>Click <strong>"Create Database"</strong></li>
+                <li>Choose <strong>"Start in test mode"</strong> (for development)</li>
+            </ol>
+            
+            <div class="warning">
+                ⚠️ <strong>Important:</strong> Test mode allows open access. For production, set up proper security rules!
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Local Testing</h3>
+            <p>Test the application on your computer before deploying.</p>
+            
+            <p><strong>Using Python:</strong></p>
+            <pre><code># Python 3
+python -m http.server 8080
+
+# Or Python 2
+python -m SimpleHTTPServer 8080</code></pre>
+            
+            <p><strong>Using Node.js:</strong></p>
+            <pre><code>npx http-server -p 8080</code></pre>
+            
+            <p><strong>Using VS Code:</strong></p>
+            <ol>
+                <li>Install the "Live Server" extension</li>
+                <li>Right-click <code>index.html</code></li>
+                <li>Select "Open with Live Server"</li>
+            </ol>
+            
+            <p>Then visit <code>http://localhost:8080</code> in your browser.</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 4: GitHub Repository Setup</h3>
+            <p>Create a repository and push your code.</p>
+            
+            <ol>
+                <li>Go to <a href="https://github.com/new" target="_blank">GitHub</a> and create a new repository</li>
+                <li>Name it <code>TuneTogether</code></li>
+                <li>Keep it public (required for GitHub Pages)</li>
+                <li>Don't initialize with README (we already have files)</li>
+            </ol>
+            
+            <p>In your project folder, run:</p>
+            <pre><code>git init
+git add .
+git commit -m "Initial commit: TuneTogether app"
+git branch -M main
+git remote add origin https://github.com/ogarsh/TuneTogether.git
+git push -u origin main</code></pre>
+        </div>
+        
+        <div class="step">
+            <h3>Step 5: Deploy to GitHub Pages</h3>
+            <p>Make your app live on the internet!</p>
+            
+            <ol>
+                <li>Go to your repository on GitHub</li>
+                <li>Click <strong>Settings</strong> tab</li>
+                <li>Scroll to <strong>Pages</strong> in the left sidebar</li>
+                <li>Under <strong>Source</strong>, select <strong>main</strong> branch</li>
+                <li>Click <strong>Save</strong></li>
+                <li>Wait 2-5 minutes for deployment</li>
+                <li>Your app will be live at: <code>https://ogarsh.tech/TuneTogether/</code></li>
+            </ol>
+            
+            <div class="success">
+                🎉 <strong>Congratulations!</strong> Your app is now live!
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 6: Update API Settings</h3>
+            <p>Add your GitHub Pages URL to API settings.</p>
+            
+            <p><strong>For Spotify:</strong></p>
+            <ol>
+                <li>Return to <a href="https://developer.spotify.com/dashboard" target="_blank">Spotify Dashboard</a></li>
+                <li>Click your app</li>
+                <li>Click <strong>Edit Settings</strong></li>
+                <li>Add <code>https://ogarsh.tech/TuneTogether/</code> to <strong>Redirect URIs</strong></li>
+                <li>Click <strong>Save</strong></li>
+            </ol>
+            
+            <p><strong>For Firebase:</strong></p>
+            <ol>
+                <li>Go to <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a></li>
+                <li>Select your project</li>
+                <li>Go to <strong>Authentication → Settings → Authorized Domains</strong></li>
+                <li>Add <code>ogarsh.tech</code> to authorized domains</li>
+            </ol>
+        </div>
+        
+        <h2>🎉 You're All Set!</h2>
+        
+        <a href="index.html" class="button">🎵 Launch TuneTogether</a>
+        <a href="https://github.com/YOUR_USERNAME/TuneTogether" class="button" target="_blank">📦 View on GitHub</a>
+        
+        <h2>🆘 Troubleshooting</h2>
+        
+        <div class="step">
+            <h3>Music Search Not Working</h3>
+            <ul>
+                <li>Check if Spotify credentials are correct in <code>config.js</code></li>
+                <li>Ensure you're not using placeholder values</li>
+                <li>Check browser console (F12) for error messages</li>
+                <li>The app will use demo tracks if APIs aren't configured</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>Party Mode Not Syncing</h3>
+            <ul>
+                <li>Verify Firebase configuration in <code>config.js</code></li>
+                <li>Ensure Realtime Database is enabled</li>
+                <li>Check database rules (should allow read/write in test mode)</li>
+                <li>Make sure both users are online</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>GitHub Pages Not Loading</h3>
+            <ul>
+                <li>Wait 5-10 minutes after enabling GitHub Pages</li>
+                <li>Check that repository is public</li>
+                <li>Verify all files are committed and pushed</li>
+                <li>Check Settings → Pages for deployment status</li>
+            </ul>
+        </div>
+        
+        <h2>📚 Additional Resources</h2>
+        <ul>
+            <li><a href="https://developer.spotify.com/documentation/web-api/" target="_blank">Spotify Web API Documentation</a></li>
+            <li><a href="https://firebase.google.com/docs/database" target="_blank">Firebase Realtime Database Guide</a></li>
+            <li><a href="https://docs.github.com/en/pages" target="_blank">GitHub Pages Documentation</a></li>
+        </ul>
+        
+        <div class="success">
+            <strong>Need Help?</strong> Create an issue on GitHub or check the README.md file for more information.
+        </div>
+    </div>
+</body>
+</html>

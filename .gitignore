@@ -1,0 +1,77 @@
+# .gitignore for TuneTogether
+
+# Configuration files with API keys (IMPORTANT!)
+config.js
+
+# Node modules (if using any build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Build files
+dist/
+build/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Firebase
+.firebase/
+firebase-debug.log
+.firebaserc
+firestore.rules
+storage.rules
+
+# Testing
+coverage/
+.nyc_output/
+*.test.js
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Editor directories and files
+.history/
+*.sublime-workspace
+*.sublime-project

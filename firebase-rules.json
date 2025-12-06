@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['host', 'created'])",
+        "messages": {
+          ".indexOn": ["timestamp"]
+        },
+        "participants": {
+          ".validate": "newData.isString() || newData.hasChildren()"
+        }
+      }
+    }
+  }
+}
