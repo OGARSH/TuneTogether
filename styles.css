@@ -138,7 +138,8 @@ body {
     height: auto;
     display: block;
     object-fit: cover;
-    max-height: 300px;
+    max-height: 150px;
+    object-position: center;
 }
 
 /* Search Section */
