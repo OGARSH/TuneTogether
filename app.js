@@ -139,105 +139,265 @@ async function searchSpotify(query) {
 // Demo results for testing without API
 function getDemoResults(query) {
     const demoTracks = [
+        // Pop/Dance
         {
             id: 'demo1',
-            title: 'Electric Dreams',
-            artist: 'Neon Lights',
-            album: 'Synthwave Collection',
-            albumArt: 'https://via.placeholder.com/300/0a0e27/00f0ff?text=Electric+Dreams',
-            duration: 240000,
+            title: 'Dancing Queen',
+            artist: 'Pop Stars',
+            album: 'Party Hits',
+            albumArt: 'https://via.placeholder.com/300/ff1493/ffffff?text=Dancing+Queen',
+            duration: 230000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
             uri: 'demo:track:1'
         },
         {
             id: 'demo2',
-            title: 'Midnight City',
-            artist: 'Future Funk',
-            album: 'Retro Vibes',
-            albumArt: 'https://via.placeholder.com/300/1a1f3a/ff00ff?text=Midnight+City',
-            duration: 195000,
+            title: 'Blinding Lights',
+            artist: 'Night Riders',
+            album: 'After Hours',
+            albumArt: 'https://via.placeholder.com/300/1a1f3a/ff00ff?text=Blinding+Lights',
+            duration: 200000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
             uri: 'demo:track:2'
         },
         {
             id: 'demo3',
-            title: 'Digital Paradise',
-            artist: 'Cyber Wave',
-            album: 'Electronic Horizons',
-            albumArt: 'https://via.placeholder.com/300/141937/00ff88?text=Digital+Paradise',
-            duration: 210000,
+            title: 'Levitating',
+            artist: 'Future Pop',
+            album: 'Disco Dreams',
+            albumArt: 'https://via.placeholder.com/300/9370db/ffffff?text=Levitating',
+            duration: 203000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
             uri: 'demo:track:3'
         },
+        // Electronic/EDM
         {
             id: 'demo4',
-            title: 'Neon Nights',
-            artist: 'Synth Masters',
-            album: 'City Lights',
-            albumArt: 'https://via.placeholder.com/300/1e2447/00f0ff?text=Neon+Nights',
-            duration: 225000,
+            title: 'Electric Dreams',
+            artist: 'Neon Lights',
+            album: 'Synthwave Collection',
+            albumArt: 'https://via.placeholder.com/300/0a0e27/00f0ff?text=Electric+Dreams',
+            duration: 240000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
             uri: 'demo:track:4'
         },
         {
             id: 'demo5',
-            title: 'Sunset Drive',
-            artist: 'Retro Wave',
-            album: 'Summer Nights',
-            albumArt: 'https://via.placeholder.com/300/0a0e27/ff00ff?text=Sunset+Drive',
-            duration: 200000,
+            title: 'Titanium',
+            artist: 'EDM Masters',
+            album: 'Festival Anthems',
+            albumArt: 'https://via.placeholder.com/300/00bfff/ffffff?text=Titanium',
+            duration: 245000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
             uri: 'demo:track:5'
         },
         {
             id: 'demo6',
-            title: 'Tokyo Lights',
-            artist: 'City Pop',
-            album: 'Urban Dreams',
-            albumArt: 'https://via.placeholder.com/300/2a1f4a/ff0088?text=Tokyo+Lights',
-            duration: 230000,
+            title: 'Midnight City',
+            artist: 'Future Funk',
+            album: 'Retro Vibes',
+            albumArt: 'https://via.placeholder.com/300/1a1f3a/ff00ff?text=Midnight+City',
+            duration: 195000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
             uri: 'demo:track:6'
         },
+        // Rock/Alternative
         {
             id: 'demo7',
-            title: 'Starlight',
-            artist: 'Dream Pop',
-            album: 'Cosmic Journey',
-            albumArt: 'https://via.placeholder.com/300/1a2f5a/00ccff?text=Starlight',
-            duration: 245000,
-            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
-            uri: 'demo:track:7'
-        },
-        {
-            id: 'demo8',
-            title: 'Summer Breeze',
-            artist: 'Chill Vibes',
-            album: 'Relaxation Station',
-            albumArt: 'https://via.placeholder.com/300/3a4f2a/88ff00?text=Summer+Breeze',
-            duration: 220000,
-            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
-            uri: 'demo:track:8'
-        },
-        {
-            id: 'demo9',
             title: 'Thunder Road',
             artist: 'Rock Legends',
             album: 'Highway Songs',
             albumArt: 'https://via.placeholder.com/300/4a2f1a/ff6600?text=Thunder+Road',
             duration: 265000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+            uri: 'demo:track:7'
+        },
+        {
+            id: 'demo8',
+            title: 'Wonderwall',
+            artist: 'Indie Rock',
+            album: 'Morning Glory',
+            albumArt: 'https://via.placeholder.com/300/8b4513/ffffff?text=Wonderwall',
+            duration: 258000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+            uri: 'demo:track:8'
+        },
+        {
+            id: 'demo9',
+            title: 'Bohemian Rhapsody',
+            artist: 'Classic Rock',
+            album: 'Opera Night',
+            albumArt: 'https://via.placeholder.com/300/2f4f4f/ffffff?text=Bohemian+Rhapsody',
+            duration: 354000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
             uri: 'demo:track:9'
         },
+        // Hip-Hop/Rap
         {
             id: 'demo10',
+            title: 'Lose Yourself',
+            artist: 'Urban Beats',
+            album: '8 Mile Soundtrack',
+            albumArt: 'https://via.placeholder.com/300/000000/ff0000?text=Lose+Yourself',
+            duration: 326000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+            uri: 'demo:track:10'
+        },
+        {
+            id: 'demo11',
+            title: 'Sicko Mode',
+            artist: 'Trap Stars',
+            album: 'Astroworld',
+            albumArt: 'https://via.placeholder.com/300/8b008b/ffff00?text=Sicko+Mode',
+            duration: 312000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3',
+            uri: 'demo:track:11'
+        },
+        {
+            id: 'demo12',
+            title: 'HUMBLE',
+            artist: 'West Coast',
+            album: 'DAMN',
+            albumArt: 'https://via.placeholder.com/300/ff0000/000000?text=HUMBLE',
+            duration: 177000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3',
+            uri: 'demo:track:12'
+        },
+        // R&B/Soul
+        {
+            id: 'demo13',
+            title: 'Superstition',
+            artist: 'Soul Legends',
+            album: 'Talking Book',
+            albumArt: 'https://via.placeholder.com/300/8b4513/ffd700?text=Superstition',
+            duration: 245000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3',
+            uri: 'demo:track:13'
+        },
+        {
+            id: 'demo14',
+            title: 'Redbone',
+            artist: 'Childish Vibes',
+            album: 'Awaken My Love',
+            albumArt: 'https://via.placeholder.com/300/ff4500/000000?text=Redbone',
+            duration: 327000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3',
+            uri: 'demo:track:14'
+        },
+        // Chill/Ambient
+        {
+            id: 'demo15',
             title: 'Ocean Waves',
             artist: 'Ambient Sounds',
             album: 'Nature Collection',
             albumArt: 'https://via.placeholder.com/300/1a3f5a/0088ff?text=Ocean+Waves',
             duration: 180000,
-            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
-            uri: 'demo:track:10'
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3',
+            uri: 'demo:track:15'
+        },
+        {
+            id: 'demo16',
+            title: 'Summer Breeze',
+            artist: 'Chill Vibes',
+            album: 'Relaxation Station',
+            albumArt: 'https://via.placeholder.com/300/3a4f2a/88ff00?text=Summer+Breeze',
+            duration: 220000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3',
+            uri: 'demo:track:16'
+        },
+        {
+            id: 'demo17',
+            title: 'Starlight',
+            artist: 'Dream Pop',
+            album: 'Cosmic Journey',
+            albumArt: 'https://via.placeholder.com/300/1a2f5a/00ccff?text=Starlight',
+            duration: 245000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+            uri: 'demo:track:17'
+        },
+        // Jazz/Blues
+        {
+            id: 'demo18',
+            title: 'Take Five',
+            artist: 'Jazz Quartet',
+            album: 'Time Out',
+            albumArt: 'https://via.placeholder.com/300/2f4f4f/ffd700?text=Take+Five',
+            duration: 324000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+            uri: 'demo:track:18'
+        },
+        {
+            id: 'demo19',
+            title: 'Feeling Good',
+            artist: 'Nina Style',
+            album: 'I Put A Spell',
+            albumArt: 'https://via.placeholder.com/300/800080/ffffff?text=Feeling+Good',
+            duration: 178000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+            uri: 'demo:track:19'
+        },
+        // Country/Folk
+        {
+            id: 'demo20',
+            title: 'Take Me Home',
+            artist: 'Country Roads',
+            album: 'Poems Prayers',
+            albumArt: 'https://via.placeholder.com/300/8b4513/ffffff?text=Take+Me+Home',
+            duration: 193000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+            uri: 'demo:track:20'
+        },
+        {
+            id: 'demo21',
+            title: 'Wagon Wheel',
+            artist: 'Folk Collective',
+            album: 'Old Crow',
+            albumArt: 'https://via.placeholder.com/300/d2691e/ffffff?text=Wagon+Wheel',
+            duration: 190000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+            uri: 'demo:track:21'
+        },
+        // Latin/Reggaeton
+        {
+            id: 'demo22',
+            title: 'Despacito',
+            artist: 'Latin Kings',
+            album: 'Vida',
+            albumArt: 'https://via.placeholder.com/300/ff6347/ffffff?text=Despacito',
+            duration: 229000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+            uri: 'demo:track:22'
+        },
+        {
+            id: 'demo23',
+            title: 'Mi Gente',
+            artist: 'J Vibes',
+            album: 'Energía',
+            albumArt: 'https://via.placeholder.com/300/ff1493/ffff00?text=Mi+Gente',
+            duration: 189000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+            uri: 'demo:track:23'
+        },
+        // K-Pop
+        {
+            id: 'demo24',
+            title: 'Dynamite',
+            artist: 'BTS Style',
+            album: 'BE',
+            albumArt: 'https://via.placeholder.com/300/ff69b4/ffffff?text=Dynamite',
+            duration: 199000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+            uri: 'demo:track:24'
+        },
+        {
+            id: 'demo25',
+            title: 'Kill This Love',
+            artist: 'Girl Power',
+            album: 'Kill This Love',
+            albumArt: 'https://via.placeholder.com/300/ff1493/000000?text=Kill+This+Love',
+            duration: 191000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
+            uri: 'demo:track:25'
         }
     ];
     
@@ -250,12 +410,9 @@ function getDemoResults(query) {
             track.album.toLowerCase().includes(searchTerm)
         );
         
-        // If no matches found, return all tracks with a message
-        if (filtered.length === 0) {
-            console.log('No exact matches, showing all demo tracks');
-            return demoTracks;
-        }
+        console.log(`Search for "${query}" found ${filtered.length} results`);
         
+        // Return filtered results, or empty array if no matches
         return filtered;
     }
     
