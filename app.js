@@ -841,6 +841,11 @@ function togglePlayPause() {
             audio.play();
         }
     }
+    
+    // Sync with party mode
+    if (state.partyRoom && state.isHost) {
+        setTimeout(() => syncPartyPlayback(), 100);
+    }
 }
 
 function playPrevious() {
@@ -848,6 +853,11 @@ function playPrevious() {
     
     state.currentIndex = (state.currentIndex - 1 + state.queue.length) % state.queue.length;
     playTrack(state.queue[state.currentIndex]);
+    
+    // Sync with party mode
+    if (state.partyRoom && state.isHost) {
+        syncPartyPlayback();
+    }
 }
 
 function playNext() {
@@ -855,6 +865,11 @@ function playNext() {
     
     state.currentIndex = (state.currentIndex + 1) % state.queue.length;
     playTrack(state.queue[state.currentIndex]);
+    
+    // Sync with party mode
+    if (state.partyRoom && state.isHost) {
+        syncPartyPlayback();
+    }
 }
 
 function updateProgress() {
@@ -914,10 +929,14 @@ function stopVisualizer() {
 }
 
 // ==================== PARTY MODE ====================
+let partyModeInterval = null;
+
 function initializeFirebase() {
     // Check if Firebase is configured
     if (CONFIG.FIREBASE_CONFIG.apiKey === 'YOUR_FIREBASE_API_KEY') {
-        console.warn('⚠️ Firebase not configured. Party mode will use local simulation.');
+        console.warn('⚠️ Firebase not configured. Party mode will use local simulation mode.');
+        console.log('💡 Party Mode is running in LOCAL mode - perfect for testing!');
+        console.log('💡 For real-time sync across devices, configure Firebase in config.js');
         return;
     }
     
@@ -926,10 +945,11 @@ function initializeFirebase() {
         if (typeof firebase !== 'undefined') {
             firebase.initializeApp(CONFIG.FIREBASE_CONFIG);
             state.firebase = firebase.database();
-            console.log('✅ Firebase initialized');
+            console.log('✅ Firebase initialized - Party Mode ready for multi-device sync!');
         }
     } catch (error) {
         console.error('❌ Firebase initialization failed:', error);
+        console.log('💡 Falling back to local simulation mode');
     }
 }
 
@@ -962,10 +982,13 @@ function setupPartyModeListeners() {
 }
 
 function createPartyRoom() {
+    console.log('🎉 Creating party room...');
     const roomCode = generateRoomCode();
     state.partyRoom = roomCode;
     state.isHost = true;
-    state.participants = [{ id: 'host', name: 'You', isHost: true }];
+    
+    const userName = prompt('Enter your name:', 'Host') || 'Host';
+    state.participants = [{ id: 'host_' + Date.now(), name: userName, isHost: true }];
     
     // Show party room UI
     document.getElementById('room-section').style.display = 'none';
@@ -978,31 +1001,48 @@ function createPartyRoom() {
     if (state.firebase) {
         state.roomRef = state.firebase.ref(`rooms/${roomCode}`);
         state.roomRef.set({
-            host: 'You',
+            host: userName,
             created: Date.now(),
-            currentTrack: null,
-            participants: state.participants
+            currentTrack: state.currentTrack,
+            isPlaying: state.isPlaying,
+            currentTime: 0,
+            participants: state.participants,
+            lastUpdate: Date.now()
         });
         
         // Listen for changes
         state.roomRef.on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
+            if (data && !state.isHost) {
                 handleRoomUpdate(data);
             }
         });
+        
+        console.log('✅ Firebase room created:', roomCode);
     } else {
-        localStorage.setItem(`party_room_${roomCode}`, JSON.stringify({
-            host: 'You',
+        // Local storage simulation
+        const roomData = {
+            host: userName,
             created: Date.now(),
-            participants: state.participants
-        }));
+            currentTrack: state.currentTrack,
+            isPlaying: state.isPlaying,
+            currentTime: 0,
+            participants: state.participants,
+            lastUpdate: Date.now()
+        };
+        localStorage.setItem(`party_room_${roomCode}`, JSON.stringify(roomData));
+        
+        // Start polling for changes (simulates real-time sync)
+        startLocalSync();
+        console.log('✅ Local party room created:', roomCode);
     }
     
-    addChatMessage('System', '🎉 Party room created! Share the code with friends.');
+    addChatMessage('System', `🎉 Party room created! Code: ${roomCode}`);
+    addChatMessage('System', '💡 Share this code with friends to sync music together!');
 }
 
 function joinPartyRoom() {
+    console.log('🚪 Joining party room...');
     const roomCodeInput = document.getElementById('room-code-input');
     const roomCode = roomCodeInput.value.trim().toUpperCase();
     
@@ -1011,21 +1051,24 @@ function joinPartyRoom() {
         return;
     }
     
+    // Check if room exists
+    const roomExists = state.firebase ? true : localStorage.getItem(`party_room_${roomCode}`);
+    
+    if (!roomExists && !state.firebase) {
+        alert('❌ Room not found. Please check the code and try again.');
+        return;
+    }
+    
+    const userName = prompt('Enter your name:', 'Guest') || 'Guest';
+    const participantId = 'user_' + Date.now();
+    
     state.partyRoom = roomCode;
     state.isHost = false;
-    
-    const participantId = 'user_' + Math.random().toString(36).substr(2, 9);
-    state.participants = [
-        { id: 'host', name: 'Host', isHost: true },
-        { id: participantId, name: 'You', isHost: false }
-    ];
     
     // Show party room UI
     document.getElementById('room-section').style.display = 'none';
     document.getElementById('party-room').style.display = 'block';
     document.getElementById('room-code').textContent = roomCode;
-    
-    updateParticipantsList();
     
     // Join room in Firebase or local storage
     if (state.firebase) {
@@ -1033,37 +1076,74 @@ function joinPartyRoom() {
         state.roomRef.once('value', (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                state.participants = [...data.participants, { id: participantId, name: 'You', isHost: false }];
-                state.roomRef.update({ participants: state.participants });
+                state.participants = [...(data.participants || []), { id: participantId, name: userName, isHost: false }];
+                state.roomRef.update({ 
+                    participants: state.participants,
+                    lastUpdate: Date.now()
+                });
+                
+                // Sync current track
+                if (data.currentTrack) {
+                    playTrack(data.currentTrack);
+                    if (!data.isPlaying) {
+                        togglePlayPause();
+                    }
+                }
+                
+                updateParticipantsList();
                 
                 // Listen for changes
                 state.roomRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        handleRoomUpdate(data);
+                    const roomData = snapshot.val();
+                    if (roomData) {
+                        handleRoomUpdate(roomData);
                     }
                 });
                 
-                addChatMessage('System', '✅ Joined the party!');
+                addChatMessage('System', `✅ ${userName} joined the party!`);
+                console.log('✅ Joined Firebase room:', roomCode);
             } else {
                 alert('Room not found. Please check the code.');
                 leavePartyRoom();
             }
         });
     } else {
-        const roomData = localStorage.getItem(`party_room_${roomCode}`);
+        // Local storage mode
+        const roomData = JSON.parse(localStorage.getItem(`party_room_${roomCode}`));
         if (roomData) {
-            addChatMessage('System', '✅ Joined the party!');
-        } else {
-            alert('Room not found. Please check the code.');
-            leavePartyRoom();
+            state.participants = [...(roomData.participants || []), { id: participantId, name: userName, isHost: false }];
+            roomData.participants = state.participants;
+            roomData.lastUpdate = Date.now();
+            localStorage.setItem(`party_room_${roomCode}`, JSON.stringify(roomData));
+            
+            // Sync current track
+            if (roomData.currentTrack) {
+                playTrack(roomData.currentTrack);
+                if (!roomData.isPlaying) {
+                    togglePlayPause();
+                }
+            }
+            
+            updateParticipantsList();
+            startLocalSync();
+            
+            addChatMessage('System', `✅ ${userName} joined the party!`);
+            console.log('✅ Joined local room:', roomCode);
         }
     }
 }
 
 function leavePartyRoom() {
+    console.log('👋 Leaving party room...');
+    
     if (state.roomRef) {
         state.roomRef.off();
+    }
+    
+    // Stop local sync
+    if (partyModeInterval) {
+        clearInterval(partyModeInterval);
+        partyModeInterval = null;
     }
     
     state.partyRoom = null;
@@ -1074,6 +1154,8 @@ function leavePartyRoom() {
     document.getElementById('party-room').style.display = 'none';
     document.getElementById('room-code-input').value = '';
     document.getElementById('chat-messages').innerHTML = '';
+    
+    console.log('✅ Left party room');
 }
 
 function copyRoomCode() {
@@ -1146,13 +1228,53 @@ function addChatMessage(sender, message, isEmoji = false) {
 }
 
 function syncPartyPlayback() {
-    if (!state.roomRef || !state.isHost) return;
+    if (!state.partyRoom) return;
     
-    state.roomRef.update({
+    const roomData = {
         currentTrack: state.currentTrack,
         isPlaying: state.isPlaying,
-        timestamp: Date.now()
-    });
+        currentTime: state.currentTrack ? (document.getElementById('audio-player').currentTime || 0) : 0,
+        lastUpdate: Date.now(),
+        participants: state.participants
+    };
+    
+    if (state.roomRef && state.isHost) {
+        // Firebase sync
+        state.roomRef.update(roomData);
+    } else if (state.isHost) {
+        // Local storage sync
+        const existingData = JSON.parse(localStorage.getItem(`party_room_${state.partyRoom}`) || '{}');
+        localStorage.setItem(`party_room_${state.partyRoom}`, JSON.stringify({
+            ...existingData,
+            ...roomData
+        }));
+    }
+}
+
+// Local sync polling (for testing without Firebase)
+function startLocalSync() {
+    if (partyModeInterval) {
+        clearInterval(partyModeInterval);
+    }
+    
+    partyModeInterval = setInterval(() => {
+        if (!state.partyRoom) {
+            clearInterval(partyModeInterval);
+            return;
+        }
+        
+        const roomData = JSON.parse(localStorage.getItem(`party_room_${state.partyRoom}`) || '{}');
+        
+        if (state.isHost) {
+            // Host: push current state
+            syncPartyPlayback();
+        } else {
+            // Guest: pull and sync from host
+            if (roomData.lastUpdate) {
+                handleRoomUpdate(roomData);
+            }
+        }
+    }, 1000); // Sync every second
 }
 
 function handleRoomUpdate(data) {
@@ -1164,14 +1286,44 @@ function handleRoomUpdate(data) {
     
     // Sync playback if not host
     if (!state.isHost && data.currentTrack) {
+        const audio = document.getElementById('audio-player');
+        const ytPlayer = state.youtubePlayer;
+        
+        // Check if track changed
         if (!state.currentTrack || state.currentTrack.id !== data.currentTrack.id) {
+            console.log('🎵 Syncing track:', data.currentTrack.title);
             playTrack(data.currentTrack);
         }
         
-        if (data.isPlaying && !state.isPlaying) {
-            document.getElementById('audio-player').play();
-        } else if (!data.isPlaying && state.isPlaying) {
-            document.getElementById('audio-player').pause();
+        // Sync play/pause state
+        if (data.isPlaying !== state.isPlaying) {
+            console.log('⏯️ Syncing play state:', data.isPlaying);
+            
+            if (state.playerType === 'youtube' && ytPlayer) {
+                if (data.isPlaying) {
+                    ytPlayer.playVideo();
+                } else {
+                    ytPlayer.pauseVideo();
+                }
+            } else {
+                if (data.isPlaying) {
+                    audio.play().catch(e => console.log('Auto-play prevented:', e));
+                } else {
+                    audio.pause();
+                }
+            }
+            state.isPlaying = data.isPlaying;
+            updatePlayButton();
+        }
+        
+        // Sync seek position (within 2 second tolerance)
+        if (data.currentTime && Math.abs(audio.currentTime - data.currentTime) > 2) {
+            console.log('⏩ Syncing position:', data.currentTime);
+            if (state.playerType === 'youtube' && ytPlayer) {
+                ytPlayer.seekTo(data.currentTime, true);
+            } else {
+                audio.currentTime = data.currentTime;
+            }
         }
     }
 }
