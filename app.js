@@ -612,8 +612,10 @@ function setupSearchListeners() {
 }
 
 async function performSearch() {
+    console.log('🎬 performSearch STARTED');
     const searchInput = document.getElementById('search-input');
     const query = searchInput.value.trim();
+    console.log('🎬 Search query:', query);
     
     if (!query) {
         alert('Please enter a search term');
@@ -624,21 +626,26 @@ async function performSearch() {
     resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">🔍</div><p>Searching YouTube for "' + query + '"...</p></div>';
     
     try {
+        console.log('🎬 Calling searchSpotify...');
         const results = await searchSpotify(query);
+        console.log('🎬 Got results:', results);
+        console.log('🎬 Results length:', results ? results.length : 0);
         
         if (!results || results.length === 0) {
             resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">😔</div><p>No results found for "' + query + '"<br><small>Try different keywords</small></p></div>';
             return;
         }
         
+        console.log('🎬 Displaying results...');
         displaySearchResults(results);
     } catch (error) {
-        console.error('Search failed:', error);
+        console.error('❌ Search failed:', error);
         resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">❌</div><p>Search failed: ' + error.message + '<br><small>Please check your API key or try again</small></p></div>';
     }
 }
 
 function displaySearchResults(results) {
+    console.log('🎨 displaySearchResults called with', results.length, 'results');
     const resultsContainer = document.getElementById('search-results');
     
     if (results.length === 0) {
@@ -646,9 +653,11 @@ function displaySearchResults(results) {
         return;
     }
     
+    console.log('🎨 First result:', results[0]);
+    
     resultsContainer.innerHTML = results.map((track, index) => `
         <div class="result-item" data-index="${index}" data-track='${JSON.stringify(track)}'>
-            <img src="${track.albumArt}" alt="${track.title}" class="result-album-art">
+            <img src="${track.albumArt}" alt="${track.title}" class="result-album-art" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2250%22 font-size=%2250%22>🎵</text></svg>'">
             <div class="result-info">
                 <div class="result-title">${track.title}</div>
                 <div class="result-artist">${track.artist}</div>
@@ -657,16 +666,20 @@ function displaySearchResults(results) {
         </div>
     `).join('');
     
+    console.log('🎨 Results HTML generated');
+    
     // Add click listeners to results
     document.querySelectorAll('.result-item').forEach(item => {
         item.addEventListener('click', () => {
             const track = JSON.parse(item.dataset.track);
+            console.log('🎵 Track clicked:', track.title);
             playTrack(track);
         });
     });
     
     // Store results in queue
     state.queue = results;
+    console.log('🎨 Results displayed successfully');
 }
 
 // ==================== MUSIC PLAYER ====================
