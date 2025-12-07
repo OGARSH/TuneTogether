@@ -85,15 +85,25 @@ async function initializeSpotify() {
             body: 'grant_type=client_credentials'
         });
         
+        if (!response.ok) {
+            throw new Error(`Spotify auth failed: ${response.status}`);
+        }
+        
         const data = await response.json();
         state.spotifyToken = data.access_token;
         console.log('✅ Spotify API initialized');
     } catch (error) {
         console.error('❌ Failed to initialize Spotify:', error);
+        console.log('🎵 Using demo mode instead');
     }
 }
 
 async function searchSpotify(query) {
+    // Always use demo mode for now (Spotify API requires server-side implementation)
+    console.log('🎵 Searching in demo mode:', query);
+    return getDemoResults(query);
+    
+    /* Spotify API search (requires server-side proxy to avoid CORS)
     if (!state.spotifyToken) {
         return getDemoResults(query);
     }
@@ -123,6 +133,7 @@ async function searchSpotify(query) {
         console.error('Search error:', error);
         return getDemoResults(query);
     }
+    */
 }
 
 // Demo results for testing without API
@@ -177,18 +188,78 @@ function getDemoResults(query) {
             duration: 200000,
             previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
             uri: 'demo:track:5'
+        },
+        {
+            id: 'demo6',
+            title: 'Tokyo Lights',
+            artist: 'City Pop',
+            album: 'Urban Dreams',
+            albumArt: 'https://via.placeholder.com/300/2a1f4a/ff0088?text=Tokyo+Lights',
+            duration: 230000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+            uri: 'demo:track:6'
+        },
+        {
+            id: 'demo7',
+            title: 'Starlight',
+            artist: 'Dream Pop',
+            album: 'Cosmic Journey',
+            albumArt: 'https://via.placeholder.com/300/1a2f5a/00ccff?text=Starlight',
+            duration: 245000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+            uri: 'demo:track:7'
+        },
+        {
+            id: 'demo8',
+            title: 'Summer Breeze',
+            artist: 'Chill Vibes',
+            album: 'Relaxation Station',
+            albumArt: 'https://via.placeholder.com/300/3a4f2a/88ff00?text=Summer+Breeze',
+            duration: 220000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+            uri: 'demo:track:8'
+        },
+        {
+            id: 'demo9',
+            title: 'Thunder Road',
+            artist: 'Rock Legends',
+            album: 'Highway Songs',
+            albumArt: 'https://via.placeholder.com/300/4a2f1a/ff6600?text=Thunder+Road',
+            duration: 265000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
+            uri: 'demo:track:9'
+        },
+        {
+            id: 'demo10',
+            title: 'Ocean Waves',
+            artist: 'Ambient Sounds',
+            album: 'Nature Collection',
+            albumArt: 'https://via.placeholder.com/300/1a3f5a/0088ff?text=Ocean+Waves',
+            duration: 180000,
+            previewUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+            uri: 'demo:track:10'
         }
     ];
     
-    // Filter based on query
-    if (query.trim()) {
-        return demoTracks.filter(track => 
-            track.title.toLowerCase().includes(query.toLowerCase()) ||
-            track.artist.toLowerCase().includes(query.toLowerCase()) ||
-            track.album.toLowerCase().includes(query.toLowerCase())
+    // Filter based on query (search in title, artist, or album)
+    if (query && query.trim()) {
+        const searchTerm = query.toLowerCase().trim();
+        const filtered = demoTracks.filter(track => 
+            track.title.toLowerCase().includes(searchTerm) ||
+            track.artist.toLowerCase().includes(searchTerm) ||
+            track.album.toLowerCase().includes(searchTerm)
         );
+        
+        // If no matches found, return all tracks with a message
+        if (filtered.length === 0) {
+            console.log('No exact matches, showing all demo tracks');
+            return demoTracks;
+        }
+        
+        return filtered;
     }
     
+    // Return all tracks if no query
     return demoTracks;
 }
 
