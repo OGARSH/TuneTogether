@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomCode": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['host', 'created', 'participants'])",
+        "currentTrack": {
+          ".validate": "newData.hasChildren(['id', 'title', 'artist'])"
+        },
+        "participants": {
+          ".validate": "newData.isString() || newData.hasChildren()"
+        },
+        "messages": {
+          "$messageId": {
+            ".validate": "newData.hasChildren(['sender', 'message', 'timestamp'])"
+          }
+        }
+      }
+    }
+  }
+}
