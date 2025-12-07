@@ -199,39 +199,72 @@ async function searchYouTube(query) {
     
     try {
         console.log('🎥 Searching YouTube for:', query);
+        
+        // Enhanced search query for better music results
+        const searchQuery = query.trim();
+        const musicQuery = searchQuery.includes('song') || searchQuery.includes('music') || searchQuery.includes('audio') 
+            ? searchQuery 
+            : `${searchQuery} official audio`;
+        
         const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query + ' music')}&type=video&videoCategoryId=10&maxResults=${CONFIG.MAX_SEARCH_RESULTS}&key=${CONFIG.YOUTUBE_API_KEY}`
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(musicQuery)}&type=video&videoCategoryId=10&maxResults=${CONFIG.MAX_SEARCH_RESULTS}&key=${CONFIG.YOUTUBE_API_KEY}&order=relevance`
         );
         
         if (!response.ok) {
+            const errorData = await response.json();
+            console.error('YouTube API error:', errorData);
             throw new Error(`YouTube API error: ${response.status}`);
         }
         
         const data = await response.json();
         
         if (!data.items || data.items.length === 0) {
-            console.log('No YouTube results found');
-            return [];
+            console.log('No YouTube results found, showing demo tracks');
+            return getDemoResults(query);
         }
         
         // Get video details for duration
-        const videoIds = data.items.map(item => item.id.videoId).join(',');
+        const videoIds = data.items.map(item => item.id.videoId).filter(id => id).join(',');
+        if (!videoIds) {
+            return getDemoResults(query);
+        }
+        
         const detailsResponse = await fetch(
             `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=${videoIds}&key=${CONFIG.YOUTUBE_API_KEY}`
         );
         
         const detailsData = await detailsResponse.json();
         
+        if (!detailsData.items) {
+            return getDemoResults(query);
+        }
+        
         const results = detailsData.items.map(video => {
             // Parse ISO 8601 duration (e.g., PT4M13S)
             const duration = parseYouTubeDuration(video.contentDetails.duration);
             
+            // Clean up title - remove common suffixes
+            let cleanTitle = video.snippet.title
+                .replace(/\(Official .*?\)/gi, '')
+                .replace(/\[Official .*?\]/gi, '')
+                .replace(/- Official .*/gi, '')
+                .replace(/\(.*?Video\)/gi, '')
+                .replace(/\[.*?Video\]/gi, '')
+                .trim();
+            
+            // Extract artist from channel name (remove common suffixes)
+            let artist = video.snippet.channelTitle
+                .replace(/VEVO$/i, '')
+                .replace(/Official$/i, '')
+                .replace(/Music$/i, '')
+                .trim();
+            
             return {
                 id: video.id,
-                title: video.snippet.title,
-                artist: video.snippet.channelTitle,
-                album: 'YouTube',
-                albumArt: video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
+                title: cleanTitle || video.snippet.title,
+                artist: artist || video.snippet.channelTitle,
+                album: 'YouTube Music',
+                albumArt: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.medium?.url || video.snippet.thumbnails.default?.url,
                 duration: duration,
                 previewUrl: `https://www.youtube.com/watch?v=${video.id}`,
                 uri: `youtube:video:${video.id}`,
@@ -562,17 +595,26 @@ async function performSearch() {
     const searchInput = document.getElementById('search-input');
     const query = searchInput.value.trim();
     
-    if (!query) return;
+    if (!query) {
+        alert('Please enter a search term');
+        return;
+    }
     
     const resultsContainer = document.getElementById('search-results');
-    resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">🔍</div><p>Searching...</p></div>';
+    resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">🔍</div><p>Searching YouTube for "' + query + '"...</p></div>';
     
     try {
         const results = await searchSpotify(query);
+        
+        if (!results || results.length === 0) {
+            resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">😔</div><p>No results found for "' + query + '"<br><small>Try different keywords</small></p></div>';
+            return;
+        }
+        
         displaySearchResults(results);
     } catch (error) {
         console.error('Search failed:', error);
-        resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">❌</div><p>Search failed. Please try again.</p></div>';
+        resultsContainer.innerHTML = '<div class="results-placeholder"><div class="placeholder-icon">❌</div><p>Search failed: ' + error.message + '<br><small>Please check your API key or try again</small></p></div>';
     }
 }
 
