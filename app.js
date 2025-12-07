@@ -1,5 +1,8 @@
-// TuneTogether - Main Application JavaScript
-// Handles music search, playback, party mode, and playlists
+/**
+ * TuneTogether - Main Application JavaScript
+ * Handles music search, playback, party mode, and playlists
+ * Made by OGARSH
+ */
 
 // ==================== STATE MANAGEMENT ====================
 let state = {

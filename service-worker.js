@@ -1,5 +1,8 @@
-// Service Worker for TuneTogether
-// Provides offline support and faster loading
+/**
+ * Service Worker for TuneTogether
+ * Provides offline support and faster loading
+ * Made by OGARSH
+ */
 
 const CACHE_NAME = 'tunetogether-v1';
 const urlsToCache = [

@@ -1,5 +1,8 @@
-// config.template.js - Template for API configuration
-// Copy this file to config.js and add your actual API keys
+/**
+ * config.template.js - Template for API configuration
+ * Copy this file to config.js and add your actual API keys
+ * Made by OGARSH
+ */
 
 const CONFIG = {
     // Spotify API Configuration
