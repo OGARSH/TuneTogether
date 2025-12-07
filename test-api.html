@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #00ffff;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        #output {
+            background: #000;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #00ffff;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .error { color: #ff0000; }
+        .success { color: #00ff00; }
+        .info { color: #00ffff; }
+    </style>
+</head>
+<body>
+    <h1>YouTube API Direct Test</h1>
+    <p>This page tests the YouTube API directly to see what's going wrong.</p>
+    
+    <button onclick="testAPI()">Test YouTube API</button>
+    <button onclick="clearOutput()">Clear Output</button>
+    
+    <div id="output">Click "Test YouTube API" to start...</div>
+
+    <script>
+        const API_KEY = 'AIzaSyDMxdN_KGUatCZiOSzyfe5jhZ-PoG-ECeU';
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = `[${timestamp}] ${message}\n`;
+            output.appendChild(span);
+            console.log(message);
+        }
+        
+        function clearOutput() {
+            output.innerHTML = '';
+        }
+        
+        async function testAPI() {
+            clearOutput();
+            log('🚀 Starting YouTube API test...', 'info');
+            log('🔑 API Key: ' + API_KEY.substring(0, 15) + '...', 'info');
+            
+            const query = 'wavy official audio';
+            const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoCategoryId=10&maxResults=5&key=${API_KEY}`;
+            
+            log('🌐 URL: ' + searchUrl.replace(API_KEY, 'API_KEY_HIDDEN'), 'info');
+            
+            try {
+                log('📡 Fetching...', 'info');
+                const response = await fetch(searchUrl);
+                
+                log('📊 Response Status: ' + response.status + ' ' + response.statusText, response.ok ? 'success' : 'error');
+                log('📋 Response Headers:', 'info');
+                for (let [key, value] of response.headers.entries()) {
+                    log(`  ${key}: ${value}`, 'info');
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log('❌ Error Response Body:', 'error');
+                    log(errorText, 'error');
+                    
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        log('❌ Error Details:', 'error');
+                        log(JSON.stringify(errorJson, null, 2), 'error');
+                    } catch (e) {
+                        log('Could not parse error as JSON', 'error');
+                    }
+                    return;
+                }
+                
+                const data = await response.json();
+                log('✅ Success! Got ' + data.items.length + ' results', 'success');
+                log('📦 Response Data:', 'success');
+                log(JSON.stringify(data, null, 2), 'success');
+                
+                log('\n🎵 Video Results:', 'success');
+                data.items.forEach((item, index) => {
+                    log(`${index + 1}. ${item.snippet.title}`, 'success');
+                    log(`   Channel: ${item.snippet.channelTitle}`, 'success');
+                    log(`   Video ID: ${item.id.videoId}`, 'success');
+                });
+                
+            } catch (error) {
+                log('❌ Fetch Error:', 'error');
+                log('Error Name: ' + error.name, 'error');
+                log('Error Message: ' + error.message, 'error');
+                log('Error Stack:', 'error');
+                log(error.stack, 'error');
+                
+                if (error.message.includes('CORS')) {
+                    log('\n⚠️ CORS Error Detected!', 'error');
+                    log('The YouTube API might be blocking requests from localhost.', 'error');
+                    log('Possible solutions:', 'info');
+                    log('1. Use a server-side proxy', 'info');
+                    log('2. Enable CORS in browser (for testing only)', 'info');
+                    log('3. Deploy to a real domain', 'info');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

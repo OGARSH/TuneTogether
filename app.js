@@ -4,6 +4,43 @@
  * Made by OGARSH
  */
 
+// ==================== DEBUG PANEL ====================
+// Intercept console.log to show in debug panel
+const originalLog = console.log;
+const originalError = console.error;
+const originalWarn = console.warn;
+
+function debugLog(message, type = 'log') {
+    const debugOutput = document.getElementById('debug-output');
+    if (debugOutput) {
+        const timestamp = new Date().toLocaleTimeString();
+        const color = type === 'error' ? '#ff0000' : type === 'warn' ? '#ffaa00' : '#00ff00';
+        const div = document.createElement('div');
+        div.style.color = color;
+        div.style.marginBottom = '5px';
+        div.style.borderLeft = `3px solid ${color}`;
+        div.style.paddingLeft = '10px';
+        div.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${String(message)}`;
+        debugOutput.appendChild(div);
+        debugOutput.scrollTop = debugOutput.scrollHeight;
+    }
+}
+
+console.log = function(...args) {
+    originalLog.apply(console, args);
+    debugLog(args.join(' '), 'log');
+};
+
+console.error = function(...args) {
+    originalError.apply(console, args);
+    debugLog('❌ ' + args.join(' '), 'error');
+};
+
+console.warn = function(...args) {
+    originalWarn.apply(console, args);
+    debugLog('⚠️ ' + args.join(' '), 'warn');
+};
+
 // ==================== STATE MANAGEMENT ====================
 let state = {
     currentTrack: null,

@@ -45,7 +45,20 @@
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
                     </button>
+                    <button onclick="document.getElementById('debug-panel').style.display='block'" style="padding: 10px 15px; background: #ff00ff; color: #000; border: 2px solid #ff00ff; cursor: pointer; margin-left: 10px; border-radius: 8px; font-weight: bold;">🐛 DEBUG</button>
                 </div>
+            </div>
+
+            <!-- Debug Panel -->
+            <div id="debug-panel" style="position: fixed; top: 10px; right: 10px; width: 450px; max-height: 80vh; background: rgba(0,0,0,0.98); color: #00ff00; padding: 15px; overflow-y: auto; z-index: 9999; border: 3px solid #00ffff; font-family: monospace; font-size: 12px; display: none; border-radius: 10px; box-shadow: 0 0 20px rgba(0,255,255,0.5);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #00ffff; padding-bottom: 10px;">
+                    <strong style="color: #00ffff; font-size: 14px;">🐛 DEBUG CONSOLE</strong>
+                    <div>
+                        <button onclick="document.getElementById('debug-output').innerHTML=''" style="background: #ffaa00; color: #000; border: none; padding: 5px 10px; cursor: pointer; margin-right: 5px; border-radius: 4px;">Clear</button>
+                        <button onclick="document.getElementById('debug-panel').style.display='none'" style="background: #ff0000; color: #fff; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">✖</button>
+                    </div>
+                </div>
+                <div id="debug-output" style="line-height: 1.6;"></div>
             </div>
 
             <!-- Search Results -->
