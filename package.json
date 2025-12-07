@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/ogarsh/TuneTogether/issues"
   },
-  "homepage": "https://ogarsh.tech/TuneTogether/"
+  "homepage": "https://ogarsh.tech/TuneTogether/",
+  "dependencies": {
+    "firebase": "^12.6.0"
+  }
 }

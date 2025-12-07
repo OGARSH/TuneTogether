@@ -30,13 +30,14 @@ const CONFIG = {
     // 4. Enable Realtime Database
     // 5. Set up security rules appropriately
     FIREBASE_CONFIG: {
-        apiKey: "YOUR_FIREBASE_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyCwoMwW9YhuwmAc1RxlvS2JWH4FnQP5I6w",
+        authDomain: "tunetogether-ff455.firebaseapp.com",
+        databaseURL: "https://tunetogether-ff455-default-rtdb.firebaseio.com",
+        projectId: "tunetogether-ff455",
+        storageBucket: "tunetogether-ff455.firebasestorage.app",
+        messagingSenderId: "562818134954",
+        appId: "1:562818134954:web:658db8221e2415cb75b1d3",
+        measurementId: "G-NTM83M6E5P"
     },
     
     // App Settings
