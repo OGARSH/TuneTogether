@@ -199,6 +199,7 @@ async function searchYouTube(query) {
     
     try {
         console.log('🎥 Searching YouTube for:', query);
+        console.log('🔑 Using API key:', CONFIG.YOUTUBE_API_KEY.substring(0, 10) + '...');
         
         // Enhanced search query for better music results
         const searchQuery = query.trim();
@@ -206,20 +207,24 @@ async function searchYouTube(query) {
             ? searchQuery 
             : `${searchQuery} official audio`;
         
-        const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(musicQuery)}&type=video&videoCategoryId=10&maxResults=${CONFIG.MAX_SEARCH_RESULTS}&key=${CONFIG.YOUTUBE_API_KEY}&order=relevance`
-        );
+        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(musicQuery)}&type=video&videoCategoryId=10&maxResults=${CONFIG.MAX_SEARCH_RESULTS}&key=${CONFIG.YOUTUBE_API_KEY}&order=relevance`;
+        console.log('🌐 Fetching:', searchUrl.replace(CONFIG.YOUTUBE_API_KEY, 'API_KEY_HIDDEN'));
+        
+        const response = await fetch(searchUrl);
+        
+        console.log('📡 Response status:', response.status, response.statusText);
         
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error('YouTube API error:', errorData);
-            throw new Error(`YouTube API error: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            console.error('❌ YouTube API error response:', errorData);
+            throw new Error(`YouTube API error: ${response.status} - ${errorData.error?.message || response.statusText}`);
         }
         
         const data = await response.json();
+        console.log('✅ YouTube API response:', data);
         
         if (!data.items || data.items.length === 0) {
-            console.log('No YouTube results found, showing demo tracks');
+            console.log('⚠️ No YouTube results found, showing demo tracks');
             return getDemoResults(query);
         }
         
