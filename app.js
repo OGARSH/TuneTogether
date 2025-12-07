@@ -148,8 +148,12 @@ async function initializeSpotify() {
 }
 
 async function searchSpotify(query) {
+    console.log('🎯 searchSpotify called with query:', query);
+    console.log('🎯 CONFIG.USE_YOUTUBE_API:', CONFIG.USE_YOUTUBE_API);
+    
     // Use YouTube if enabled
     if (CONFIG.USE_YOUTUBE_API) {
+        console.log('🎯 Calling searchYouTube...');
         return searchYouTube(query);
     }
     
@@ -192,8 +196,14 @@ async function searchSpotify(query) {
 
 // ==================== YOUTUBE API ====================
 async function searchYouTube(query) {
+    console.log('🔥 searchYouTube CALLED!');
+    console.log('🔥 Query:', query);
+    console.log('🔥 API Key exists:', !!CONFIG.YOUTUBE_API_KEY);
+    console.log('🔥 API Key value:', CONFIG.YOUTUBE_API_KEY);
+    
     if (!CONFIG.YOUTUBE_API_KEY || CONFIG.YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY') {
         console.warn('⚠️ YouTube API key not configured. Using demo mode.');
+        alert('YouTube API key not configured!');
         return getDemoResults(query);
     }
     
@@ -207,12 +217,15 @@ async function searchYouTube(query) {
             ? searchQuery 
             : `${searchQuery} official audio`;
         
+        console.log('🎵 Final search query:', musicQuery);
+        
         const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(musicQuery)}&type=video&videoCategoryId=10&maxResults=${CONFIG.MAX_SEARCH_RESULTS}&key=${CONFIG.YOUTUBE_API_KEY}&order=relevance`;
         console.log('🌐 Fetching:', searchUrl.replace(CONFIG.YOUTUBE_API_KEY, 'API_KEY_HIDDEN'));
         
         const response = await fetch(searchUrl);
         
         console.log('📡 Response status:', response.status, response.statusText);
+        console.log('📡 Response headers:', response.headers);
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
