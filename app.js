@@ -282,6 +282,8 @@ async function searchYouTube(query) {
         
     } catch (error) {
         console.error('❌ YouTube search failed:', error);
+        console.error('Error details:', error.message, error.stack);
+        alert('YouTube API Error: ' + error.message + '\n\nCheck console (F12) for details. Using demo mode.');
         console.log('🎵 Falling back to demo mode');
         return getDemoResults(query);
     }
