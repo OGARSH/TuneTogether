@@ -79,6 +79,26 @@ function initYouTubePlayer() {
 function onYouTubePlayerReady(event) {
     console.log('✅ YouTube player ready');
     state.youtubePlayer.setVolume(state.volume);
+    
+    // Update progress for YouTube videos
+    setInterval(() => {
+        if (state.playerType === 'youtube' && state.youtubePlayer && state.isPlaying) {
+            const currentTime = state.youtubePlayer.getCurrentTime();
+            const duration = state.youtubePlayer.getDuration();
+            if (duration > 0) {
+                const percent = (currentTime / duration) * 100;
+                const progressFill = document.getElementById('progress-fill');
+                const progressInput = document.getElementById('progress-input');
+                const currentTimeEl = document.getElementById('current-time');
+                const durationEl = document.getElementById('duration');
+                
+                progressFill.style.width = `${percent}%`;
+                progressInput.value = percent;
+                currentTimeEl.textContent = formatTime(currentTime);
+                durationEl.textContent = formatTime(duration);
+            }
+        }
+    }, 1000);
 }
 
 function onYouTubePlayerStateChange(event) {
@@ -701,8 +721,14 @@ function setupPlayerListeners() {
     
     // Progress bar
     progressInput.addEventListener('input', (e) => {
-        const time = (e.target.value / 100) * audio.duration;
-        audio.currentTime = time;
+        if (state.playerType === 'youtube' && state.youtubePlayer) {
+            const duration = state.youtubePlayer.getDuration();
+            const time = (e.target.value / 100) * duration;
+            state.youtubePlayer.seekTo(time, true);
+        } else {
+            const time = (e.target.value / 100) * audio.duration;
+            audio.currentTime = time;
+        }
     });
     
     // Volume
@@ -753,11 +779,15 @@ function playTrack(track) {
     const audio = document.getElementById('audio-player');
     
     state.currentTrack = track;
+    state.isPlaying = true;
     
     // Update UI
     document.getElementById('album-art').src = track.albumArt;
     document.getElementById('track-title').textContent = track.title;
     document.getElementById('track-artist').textContent = track.artist;
+    
+    // Show player
+    document.getElementById('player').style.display = 'block';
     
     // Play based on track type
     if (track.youtubeId && state.youtubePlayer) {
@@ -767,6 +797,7 @@ function playTrack(track) {
         audio.src = '';
         state.youtubePlayer.loadVideoById(track.youtubeId);
         state.youtubePlayer.playVideo();
+        startVisualizer();
         console.log('▶️ Playing YouTube video:', track.title);
     } else if (track.previewUrl && !track.previewUrl.includes('youtube.com')) {
         // Audio track (demo or Spotify preview)
@@ -776,11 +807,15 @@ function playTrack(track) {
         }
         audio.src = track.previewUrl;
         audio.play();
+        startVisualizer();
         console.log('▶️ Playing audio track:', track.title);
     } else {
-        alert('Preview not available for this track');
+        console.error('❌ No valid source for track:', track);
+        alert('This track cannot be played. YouTube videos are audio-only.');
         return;
     }
+    
+    updatePlayButton();
     
     // Sync with party room if active
     if (state.partyRoom && state.isHost) {
