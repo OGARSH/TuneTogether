@@ -137,9 +137,9 @@ body {
     width: 100%;
     height: auto;
     display: block;
-    object-fit: cover;
-    max-height: 150px;
-    object-position: center;
+    object-fit: contain;
+    max-height: 200px;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1e3f 100%);
 }
 
 /* Search Section */
