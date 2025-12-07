@@ -11,8 +11,8 @@ const CONFIG = {
     // 2. Copy Client ID and Client Secret
     // 3. Add http://localhost:8080 as redirect URI for testing
     // 4. Add your GitHub Pages URL as redirect URI for production
-    SPOTIFY_CLIENT_ID: '6c31645ffb004ab8b44d06f7b96d1b66',
-    SPOTIFY_CLIENT_SECRET: '3618fdc0b4824cfd91a8d425dac32987',
+    SPOTIFY_CLIENT_ID: 'YOUR_SPOTIFY_CLIENT_ID',
+    SPOTIFY_CLIENT_SECRET: 'YOUR_SPOTIFY_CLIENT_SECRET',
     
     // YouTube API Configuration (Alternative to Spotify)
     // Get your API key from: https://console.cloud.google.com/
@@ -20,7 +20,7 @@ const CONFIG = {
     // 2. Enable YouTube Data API v3
     // 3. Create credentials (API key)
     // 4. Restrict the key (optional but recommended)
-    YOUTUBE_API_KEY: 'AIzaSyDMxdN_KGUatCZiOSzyfe5jhZ-PoG-ECeU',
+    YOUTUBE_API_KEY: 'YOUR_YOUTUBE_API_KEY',
     
     // Firebase Configuration (Required for Party Mode)
     // Get your config from: https://console.firebase.google.com/
@@ -40,13 +40,13 @@ const CONFIG = {
     },
     
     // App Settings
-    USE_YOUTUBE_API: true, // Set to true to use YouTube API instead of Spotify
+    USE_YOUTUBE_API: false, // Set to true to use YouTube API instead of Spotify
     MAX_SEARCH_RESULTS: 20,
     ROOM_CODE_LENGTH: 6,
     
     // Demo Mode
     // If API keys are not configured, the app will use demo tracks
-    DEMO_MODE: false
+    DEMO_MODE: true
 };
 
 // Export for use in other files
