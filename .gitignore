@@ -1,7 +1,7 @@
 # .gitignore for TuneTogether
 
 # Configuration files with API keys (IMPORTANT!)
-config.js
+# config.js (Un-ignored for GitHub Pages deployment)
 
 # Node modules (if using any build tools)
 node_modules/
