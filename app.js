@@ -219,60 +219,37 @@ async function searchSpotify(query) {
 
 // ==================== YOUTUBE API ====================
 async function searchYouTube(query) {
-    console.log('🔥 searchYouTube CALLED!');
+    console.log('🔥 searchYouTube CALLED (via Java Backend)!');
     console.log('🔥 Query:', query);
-    console.log('🔥 API Key exists:', !!CONFIG.YOUTUBE_API_KEY);
-    console.log('🔥 API Key value:', CONFIG.YOUTUBE_API_KEY);
-    
-    if (!CONFIG.YOUTUBE_API_KEY || CONFIG.YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY') {
-        console.warn('⚠️ YouTube API key not configured. Using demo mode.');
-        alert('YouTube API key not configured!');
-        return getDemoResults(query);
-    }
     
     try {
-        console.log('🎥 Searching YouTube for:', query);
-        console.log('🔑 Using API key:', CONFIG.YOUTUBE_API_KEY.substring(0, 10) + '...');
+        console.log('🎥 Searching YouTube via Backend for:', query);
         
-        // Enhanced search query for better music results
-        const searchQuery = query.trim();
-        const musicQuery = searchQuery.includes('song') || searchQuery.includes('music') || searchQuery.includes('audio') 
-            ? searchQuery 
-            : `${searchQuery} official audio`;
-        
-        console.log('🎵 Final search query:', musicQuery);
-        
-        const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(musicQuery)}&type=video&videoCategoryId=10&maxResults=${CONFIG.MAX_SEARCH_RESULTS}&key=${CONFIG.YOUTUBE_API_KEY}&order=relevance`;
-        console.log('🌐 Fetching:', searchUrl.replace(CONFIG.YOUTUBE_API_KEY, 'API_KEY_HIDDEN'));
-        
-        const response = await fetch(searchUrl);
-        
-        console.log('📡 Response status:', response.status, response.statusText);
-        console.log('📡 Response headers:', response.headers);
+        // 1. Hit our Java backend for the search
+        const backendSearchUrl = `${CONFIG.BACKEND_URL || 'http://localhost:8081'}/api/music/search?query=${encodeURIComponent(query)}`;
+        const response = await fetch(backendSearchUrl);
         
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('❌ YouTube API error response:', errorData);
-            throw new Error(`YouTube API error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+            const errorData = await response.text();
+            throw new Error(`Backend API error: ${response.status} - ${errorData}`);
         }
         
         const data = await response.json();
-        console.log('✅ YouTube API response:', data);
+        console.log('✅ Backend API search response:', data);
         
         if (!data.items || data.items.length === 0) {
             console.log('⚠️ No YouTube results found, showing demo tracks');
             return getDemoResults(query);
         }
         
-        // Get video details for duration
+        // 2. Get video details for duration via Java backend
         const videoIds = data.items.map(item => item.id.videoId).filter(id => id).join(',');
         if (!videoIds) {
             return getDemoResults(query);
         }
         
-        const detailsResponse = await fetch(
-            `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=${videoIds}&key=${CONFIG.YOUTUBE_API_KEY}`
-        );
+        const backendDetailsUrl = `${CONFIG.BACKEND_URL || 'http://localhost:8081'}/api/music/details?videoIds=${videoIds}`;
+        const detailsResponse = await fetch(backendDetailsUrl);
         
         const detailsData = await detailsResponse.json();
         
@@ -313,13 +290,12 @@ async function searchYouTube(query) {
             };
         });
         
-        console.log(`✅ Found ${results.length} YouTube results`);
+        console.log(`✅ Found ${results.length} YouTube results via Backend`);
         return results;
         
     } catch (error) {
-        console.error('❌ YouTube search failed:', error);
+        console.error('❌ Backend search failed:', error);
         console.error('Error details:', error.message, error.stack);
-        alert('YouTube API Error: ' + error.message + '\n\nCheck console (F12) for details. Using demo mode.');
         console.log('🎵 Falling back to demo mode');
         return getDemoResults(query);
     }

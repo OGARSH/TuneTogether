@@ -41,6 +41,7 @@ const CONFIG = {
     },
     
     // App Settings
+    BACKEND_URL: 'http://localhost:8081',
     USE_YOUTUBE_API: true, // Set to true to use YouTube API instead of Spotify
     MAX_SEARCH_RESULTS: 20,
     ROOM_CODE_LENGTH: 6,
